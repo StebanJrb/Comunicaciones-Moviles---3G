@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3G — Evolución de Redes Móviles</title>
+<style>
+:root{
+  --bg:#07101e;--bg2:#0d1a2e;--bg3:#111f35;
+  --card:#0f1e32;--card2:#162540;
+  --blue:#4a9eff;--blue2:#1a5fad;--blue3:#0a2a5a;
+  --orange:#f5a623;--green:#2ecc71;--red:#e74c3c;--purple:#9b59b6;--cyan:#1abc9c;
+  --text:#e8eef8;--text2:#8aa8cc;--text3:#4a6a8a;
+  --border:#1a3050;--border2:#223a5a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(7,16,30,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;gap:0;height:54px}
+.nav-logo{font-size:15px;font-weight:700;color:var(--blue);letter-spacing:2px;margin-right:32px;white-space:nowrap}
+.nav-logo span{color:var(--orange)}
+.nav-links{display:flex;gap:2px;flex-wrap:nowrap;overflow-x:auto}
+.nav-links a{padding:6px 14px;font-size:12px;color:var(--text2);text-decoration:none;border-radius:20px;transition:all .2s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.act{background:var(--blue3);color:var(--blue)}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding-top:54px}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 20px}
+.hero-tag{display:inline-block;background:var(--blue3);border:1px solid var(--blue2);color:var(--blue);font-size:11px;font-weight:600;letter-spacing:3px;padding:4px 14px;border-radius:20px;margin-bottom:20px}
+.hero-title{font-size:clamp(36px,7vw,80px);font-weight:700;line-height:1.1;margin-bottom:16px}
+.hero-title span{color:var(--blue)}
+.hero-sub{font-size:16px;color:var(--text2);max-width:520px;margin:0 auto 32px;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{padding:12px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-primary:hover{background:#3a8eef;transform:translateY(-1px)}
+.btn-outline{padding:12px 28px;background:transparent;color:var(--blue);border:1px solid var(--blue2);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-outline:hover{background:var(--blue3)}
+.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text3);font-size:11px;z-index:2}
+.hero-scroll-dot{width:1px;height:40px;background:linear-gradient(to bottom,var(--blue),transparent)}
+.tt3d{position:fixed;background:rgba(7,16,30,.97);border:1px solid var(--blue2);border-radius:10px;padding:12px 16px;max-width:260px;pointer-events:none;z-index:1000;opacity:0;transition:opacity .2s;top:80px;left:20px}
+.tt3d h4{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:5px}
+.tt3d p{font-size:11px;color:#8aa8cc;line-height:1.6}
+.hero-legend{position:absolute;bottom:70px;right:24px;z-index:2;display:flex;flex-direction:column;gap:6px}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);background:rgba(7,16,30,.7);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── SECTIONS ── */
+section{padding:80px 40px;max-width:1100px;margin:0 auto}
+.sec-tag{display:inline-block;background:var(--blue3);border:1px solid var(--blue2);color:var(--blue);font-size:10px;font-weight:700;letter-spacing:3px;padding:3px 12px;border-radius:20px;margin-bottom:12px}
+.sec-title{font-size:clamp(24px,4vw,36px);font-weight:700;margin-bottom:10px}
+.sec-title span{color:var(--blue)}
+.sec-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:600px;margin-bottom:40px}
+.divider{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border2),transparent);margin:0}
+
+/* ── TIMELINE ── */
+#timeline{background:var(--bg2)}
+#tl-outer{padding:80px 40px;max-width:1100px;margin:0 auto}
+.tl-track{display:flex;gap:0;position:relative;padding-bottom:16px;overflow-x:auto}
+.tl-track::before{content:'';position:absolute;top:20px;left:0;right:0;height:2px;background:var(--border2)}
+.tl-item{flex:1;min-width:140px;text-align:center;position:relative;cursor:pointer;padding-top:4px}
+.tl-dot{width:40px;height:40px;border-radius:50%;margin:0 auto 10px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;position:relative;z-index:1;transition:transform .2s,box-shadow .2s;background:var(--bg)}
+.tl-item:hover .tl-dot,.tl-item.act .tl-dot{transform:scale(1.2);box-shadow:0 0 16px currentColor}
+.tl-year{font-size:12px;font-weight:600;color:var(--text)}
+.tl-sub2{font-size:10px;color:var(--text3);margin-top:2px}
+.tl-panel{display:none;margin-top:24px;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:24px;animation:fadeIn .3s}
+.tl-panel.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--blue2);transform:translateY(-2px)}
+.ctag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.cb{background:#0a2a5a;color:var(--blue)}
+.cg{background:#0a2a1a;color:var(--green)}
+.ca{background:#2a1a0a;color:var(--orange)}
+.cp{background:#1a0a2a;color:var(--purple)}
+.card h3{font-size:14px;font-weight:600;margin-bottom:6px}
+.card p{font-size:12px;color:var(--text2);line-height:1.6}
+.cdet{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.cdet.on{display:block}
+.sr{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)}
+.sr:last-child{border:none}
+.sk{color:var(--text2)}
+.sv{font-weight:600;color:var(--text)}
+
+/* ── ARCH ── */
+#umts{background:var(--bg2)}
+#umts-inner{padding:80px 40px;max-width:1100px;margin:0 auto}
+.arch-wrap{overflow-x:auto;margin:16px 0}
+.arch-svg{min-width:600px;width:100%}
+.apop{display:none;background:var(--card2);border:1px solid var(--blue2);border-radius:12px;padding:20px;margin-top:12px;animation:fadeIn .3s}
+.apop.on{display:block}
+.apop h4{font-size:14px;font-weight:600;color:var(--blue);margin-bottom:8px}
+.apop p{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* ── CDMA DEMO ── */
+.cdemo{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:24px}
+.chip-row{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap}
+.chip-lbl{font-size:11px;color:var(--text2);min-width:100px}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:38px;height:30px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;transition:all .3s}
+
+/* ── EDGE ── */
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+@media(max-width:560px){.cmp-grid{grid-template-columns:1fr}}
+.cmp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.cmp-card.hl{border-color:var(--blue);box-shadow:0 0 20px rgba(74,158,255,.1)}
+
+/* ── SPEEDS ── */
+.speed-item{margin:10px 0}
+.speed-head{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px}
+.speed-track{height:22px;background:var(--card);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.speed-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#fff;transition:width 1.4s cubic-bezier(.4,0,.2,1);width:0}
+
+/* ── QUIZ ── */
+#retos{background:var(--bg2)}
+#retos-inner{padding:80px 40px;max-width:900px;margin:0 auto}
+.rtab-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.rtab{padding:8px 20px;font-size:13px;border:1px solid var(--border2);border-radius:24px;background:transparent;color:var(--text2);cursor:pointer;transition:all .2s}
+.rtab.on{background:var(--blue3);color:var(--blue);border-color:var(--blue2)}
+.qq{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px}
+.qq h4{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.5}
+.qopts{display:flex;flex-direction:column;gap:7px}
+.qopt{padding:10px 14px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;font-size:13px;background:var(--bg3);color:var(--text);text-align:left;transition:all .15s}
+.qopt:hover:not([disabled]){background:var(--blue3);border-color:var(--blue2);color:var(--blue)}
+.qopt.ok{background:#0a2a1a!important;border-color:var(--green)!important;color:var(--green)!important}
+.qopt.no{background:#2a0a0a!important;border-color:var(--red)!important;color:var(--red)!important}
+.qfb{font-size:12px;margin-top:8px;padding:10px 13px;border-radius:7px;display:none;line-height:1.6}
+.qfb.on{display:block}
+.scorebox{text-align:center;padding:28px;background:var(--card);border-radius:12px;display:none;margin-top:12px}
+.scorenum{font-size:52px;font-weight:700;color:var(--blue)}
+
+/* ── CASE ── */
+.case-steps{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.cstep-btn{padding:7px 16px;font-size:12px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;transition:all .2s}
+.cstep-btn.on{background:var(--blue3);color:var(--blue);border-color:var(--blue2)}
+.csp{display:none}
+.csp.on{display:block;animation:fadeIn .3s}
+.inp-wrap{margin:10px 0}
+.inp-wrap label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
+.inp-wrap select,.inp-wrap input{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--text);font-size:13px}
+.rcard{display:none;background:var(--card2);border:1px solid var(--blue2);border-radius:10px;padding:16px;margin-top:12px;animation:fadeIn .3s}
+.rcard.on{display:block}
+.topbtn{padding:8px 20px;border:1px solid var(--blue2);border-radius:20px;background:transparent;color:var(--blue);cursor:pointer;font-size:13px;margin-top:10px;transition:all .2s}
+.topbtn:hover{background:var(--blue3)}
+
+/* ── FOOTER ── */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 40px;text-align:center;font-size:12px;color:var(--text3)}
+footer span{color:var(--blue)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">3<span>G</span></div>
+  <div class="nav-links">
+    <a href="#hero" class="act">Inicio</a>
+    <a href="#timeline">Evolución</a>
+    <a href="#imt">IMT-2000</a>
+    <a href="#umts">WCDMA/UMTS</a>
+    <a href="#edge">EDGE</a>
+    <a href="#servicios">Servicios</a>
+    <a href="#retos">Retos</a>
+  </div>
+</nav>
+
+<!-- TOOLTIP 3D -->
+<div class="tt3d" id="tt3d"><h4 id="tt3d-t"></h4><p id="tt3d-d"></p></div>
+
+<!-- HERO -->
+<section id="hero" style="padding:0;max-width:100%;width:100%;min-height:100vh">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">INGENIERÍA DE TELECOMUNICACIONES</div>
+    <h1 class="hero-title">Redes Móviles<br><span>3G</span></h1>
+    <p class="hero-sub">IMT-2000 · WCDMA/UMTS · TDMA-EDGE · IS-136HS<br>La generación que llevó internet al bolsillo.</p>
+    <div class="hero-btns">
+      <a href="#timeline" class="btn-primary">Explorar evolución</a>
+      <a href="#retos" class="btn-outline">Ir a los retos</a>
+    </div>
+  </div>
+  <div class="hero-legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#4a9eff"></div>UE (dispositivo)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f5a623"></div>NodeB (antena)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#2ecc71"></div>RNC</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#e74c3c"></div>Core Network</div>
+  </div>
+  <div class="hero-scroll"><div class="hero-scroll-dot"></div>Explora</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<div id="timeline">
+  <div id="tl-outer">
+    <div class="sec-tag">CONTEXTO</div>
+    <h2 class="sec-title">Evolución <span>Generacional</span></h2>
+    <p class="sec-sub">Haz clic en cada generación para ver qué innovó y cómo preparó el camino a la siguiente.</p>
+    <div class="tl-track" id="tl-track"></div>
+    <div id="tl-panel"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- IMT-2000 -->
+<section id="imt">
+  <div class="sec-tag">ESTÁNDAR MARCO</div>
+  <h2 class="sec-title">IMT-<span>2000</span></h2>
+  <p class="sec-sub">El paraguas regulatorio de la ITU que unificó las tecnologías 3G a nivel global. No es una tecnología en sí — es un conjunto de requisitos mínimos. Haz clic en cada tarjeta.</p>
+  <div class="grid2" id="imt-grid"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- UMTS -->
+<div id="umts">
+  <div id="umts-inner">
+    <div class="sec-tag">ARQUITECTURA</div>
+    <h2 class="sec-title">WCDMA / <span>UMTS</span></h2>
+    <p class="sec-sub">La implementación 3G más extendida del mundo. Haz clic en cada nodo para ver su función técnica.</p>
+    <div class="arch-wrap">
+      <svg class="arch-svg" id="arch-svg" viewBox="0 0 680 200"></svg>
+    </div>
+    <div class="apop" id="apop">
+      <h4 id="ap-t"></h4>
+      <p id="ap-b"></p>
+      <div id="ap-s" style="margin-top:12px"></div>
+    </div>
+
+    <h3 style="margin-top:40px;font-size:18px;font-weight:600">Demo: <span style="color:var(--blue)">Spreading WCDMA</span></h3>
+    <p style="font-size:13px;color:var(--text2);margin:8px 0 0;line-height:1.7">WCDMA multiplica cada bit de datos por un código de alta velocidad (chip rate 3.84 Mcps), esparciendo la señal sobre 5 MHz de ancho de banda. Todos los usuarios comparten la misma frecuencia — se diferencian por su código único.</p>
+    <div class="cdemo">
+      <div class="chip-row"><span class="chip-lbl">Bit de datos:</span><div id="cd-data"></div></div>
+      <div class="chip-row"><span class="chip-lbl">Código (SF=4):</span><div id="cd-code"></div></div>
+      <div class="chip-row"><span class="chip-lbl">Chips tx:</span><div id="cd-spread"></div></div>
+      <button class="topbtn" id="cdma-btn" style="margin-top:12px">▶ Animar spreading</button>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- EDGE -->
+<section id="edge">
+  <div class="sec-tag">ESTÁNDARES TDMA</div>
+  <h2 class="sec-title">TDMA-EDGE & <span>IS-136HS</span></h2>
+  <p class="sec-sub">Evolución 3G para redes TDMA heredadas. La vía para llegar a 3G sin reemplazar la infraestructura de radio existente.</p>
+  <div class="cmp-grid" id="edge-grid"></div>
+  <h3 style="margin-top:40px;font-size:18px;font-weight:600;margin-bottom:12px">Modulación: <span style="color:var(--blue)">GMSK vs 8-PSK</span></h3>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7">8-PSK codifica 3 bits por símbolo frente a 1 bit de GMSK, triplicando la eficiencia espectral manteniendo el mismo canal de 200 kHz.</p>
+  <svg viewBox="0 0 500 180" width="100%" style="max-width:500px;display:block;background:var(--card);border-radius:12px;border:1px solid var(--border);padding:8px">
+    <text x="125" y="18" fill="#8aa8cc" font-size="11" text-anchor="middle" font-family="sans-serif">GMSK — 2 fases (1 bit/símbolo)</text>
+    <circle cx="125" cy="100" r="55" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+    <circle cx="180" cy="100" r="8" fill="#f5a623"/>
+    <text x="195" y="103" fill="#f5a623" font-size="10" font-family="sans-serif">0</text>
+    <circle cx="70" cy="100" r="8" fill="#e74c3c"/>
+    <text x="50" y="103" fill="#e74c3c" font-size="10" text-anchor="middle" font-family="sans-serif">1</text>
+    <line x1="125" y1="100" x2="180" y2="100" stroke="#f5a623" stroke-width="1" stroke-dasharray="4,2"/>
+    <line x1="125" y1="100" x2="70" y2="100" stroke="#e74c3c" stroke-width="1" stroke-dasharray="4,2"/>
+    <text x="375" y="18" fill="#8aa8cc" font-size="11" text-anchor="middle" font-family="sans-serif">8-PSK — 8 fases (3 bits/símbolo)</text>
+    <circle cx="375" cy="100" r="55" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+    <g id="psk-g"></g>
+  </svg>
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICIOS -->
+<section id="servicios">
+  <div class="sec-tag">CAPACIDADES</div>
+  <h2 class="sec-title">Servicios y <span>Velocidades</span></h2>
+  <p class="sec-sub">3G transformó el teléfono de dispositivo de voz a computadora de bolsillo. Velocidades teóricas vs. reales.</p>
+  <div id="speeds-cont"></div>
+  <div class="grid3" style="margin-top:32px" id="srv-grid"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RETOS -->
+<div id="retos">
+  <div id="retos-inner">
+    <div class="sec-tag">APRENDIZAJE ACTIVO</div>
+    <h2 class="sec-title">Retos de <span>Comprensión</span></h2>
+    <p class="sec-sub" style="margin-bottom:28px">Verifica tu entendimiento con el quiz y aplica los conceptos en un caso de ingeniería real.</p>
+    <div class="rtab-row">
+      <button class="rtab on" id="rt-q" onclick="switchR('q')">Quiz rápido</button>
+      <button class="rtab" id="rt-c" onclick="switchR('c')">Mini-caso de ingeniería</button>
+    </div>
+    <div id="r-quiz"></div>
+    <div id="r-case" style="display:none"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Universidad Piloto de Colombia · Ingeniería de Telecomunicaciones · Comunicaciones Móviles</p>
+  <p style="margin-top:6px">Tema asignado: <span>3G — IMT-2000 / WCDMA/UMTS / TDMA-EDGE / IS-136HS</span> · Ruiz Benavides Julian Steban</p>
+</footer>
+
+<!-- THREE.JS -->
+<script>
+// ── Inline micro Three.js (no CDN) ── usando Canvas 2D como fallback ligero
+(function(){
+  var canvas = document.getElementById('hero-canvas');
+  var hero = document.getElementById('hero');
+
+  function resize(){
+    canvas.width = hero.clientWidth;
+    canvas.height = hero.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var ctx = canvas.getContext('2d');
+  var tt = document.getElementById('tt3d');
+  var ttt = document.getElementById('tt3d-t');
+  var ttd = document.getElementById('tt3d-d');
+
+  // ── 3D projection helpers ──
+  var camX=0, camY=12, camZ=22;
+  var fov = 500;
+  var angle = 0;
+
+  function project(x,y,z){
+    // rotate around Y
+    var rx = x*Math.cos(angle) + z*Math.sin(angle);
+    var rz = -x*Math.sin(angle) + z*Math.cos(angle);
+    var ry = y;
+    var dz = rz + 22;
+    if(dz < 0.1) dz = 0.1;
+    var scale = fov / dz;
+    var sx = canvas.width/2 + rx*scale;
+    var sy = canvas.height/2 - (ry - 5)*scale;
+    return {x:sx, y:sy, s:scale, z:dz};
+  }
+
+  // Objects
+  var objs = [];
+
+  function mkBox(x,y,z,w,h,d,col,name,desc){
+    objs.push({type:'box',x,y,z,w,h,d,col,name,desc,px:0,py:0,pw:0,ph:0});
+  }
+  function mkSphere(x,y,z,r,col,name,desc){
+    objs.push({type:'sphere',x,y,z,r,col,name,desc,px:0,py:0,pr:0});
+  }
+  function mkTower(x,y,z,col,name,desc){
+    objs.push({type:'tower',x,y,z,col,name,desc,px:0,py:0,pw:0,ph:0});
+  }
+
+  // Buildings
+  var bldDesc='Edificio urbano. Representa densidad de usuarios. La propagación WCDMA en entornos urbanos sufre pérdidas por multitrayecto (multipath). El NodeB compensa con control de potencia dinámico y diversidad de antenas.';
+  [[-5,2,-3],[-2,3,-4],[2,1.5,-3],[5,2,-2],[-6,1.5,2],[4,2,3],[-3,1.2,4],[3,2.5,5]].forEach(function(b){
+    mkBox(b[0],b[1],b[2],1.8,b[1]*2,1.8,'#1a2a3a','Edificio urbano',bldDesc);
+  });
+
+  // NodeBs
+  [[-4,0],[ 4,-1],[0,5]].forEach(function(p,i){
+    mkTower(p[0],0,p[1],'#f5a623','NodeB '+(i+1),
+      'Estación base WCDMA. Convierte datos digitales a señal radio WCDMA a 2100 MHz (ancho de banda 5 MHz). Realiza control de potencia de bucle interno (1500 veces/segundo). Conecta al RNC por interfaz Iub (ATM o IP).');
+  });
+
+  // RNC
+  mkBox(-7,0.6,7,2.2,1.2,1.8,'#0a4a2a','RNC — Radio Network Controller',
+    'Gestiona todos los NodeB de su zona. Controla: soft handover (único de CDMA, conexión simultánea a múltiples NodeB), asignación de códigos OVSF, cifrado RRC y control de admisión. Límite entre UTRAN y el Core Network.');
+
+  // Core
+  mkBox(7,0.9,7,2.5,1.8,2,'#4a0a0a','Core Network (MSC + SGSN/GGSN)',
+    'Dos dominios paralelos: CS (voz, conmutación de circuitos) con MSC/VLR, y PS (datos, paquetes) con SGSN/GGSN. El GGSN asigna IPs y conecta a internet. Separar voz y datos fue la innovación arquitectónica clave de 3G.');
+
+  // UEs
+  [[-1,0,1],[1,0,2],[3,0,-0.5],[-2,0,2.5],[0,0,-1.5]].forEach(function(p,i){
+    mkSphere(p[0],0.3,p[2],0.22,'#4a9eff','UE — Dispositivo Móvil '+(i+1),
+      'User Equipment: teléfono + USIM. WCDMA FDD: TX en 1920-1980 MHz, RX en 2110-2170 MHz simultáneamente. Soft handover: puede conectarse a 2-3 NodeB al mismo tiempo sumando señales. Chip rate: 3.84 Mcps.');
+  });
+
+  // Particles
+  var parts = [];
+  var pathDefs=[
+    {fx:-1,fy:0.5,fz:1,tx:-4,ty:3,tz:0,col:'#4a9eff'},
+    {fx:1,fy:0.5,fz:2,tx:4,ty:3,tz:-1,col:'#4a9eff'},
+    {fx:3,fy:0.5,fz:-0.5,tx:0,ty:3,tz:5,col:'#4a9eff'},
+    {fx:-4,fy:3,fz:0,tx:-7,ty:1.5,tz:7,col:'#2ecc71'},
+    {fx:4,fy:3,fz:-1,tx:-7,ty:1.5,tz:7,col:'#2ecc71'},
+    {fx:-7,fy:1.5,fz:7,tx:7,ty:1.5,tz:7,col:'#e74c3c'}
+  ];
+  pathDefs.forEach(function(pd){
+    for(var k=0;k<2;k++){
+      parts.push({fx:pd.fx,fy:pd.fy,fz:pd.fz,tx:pd.tx,ty:pd.ty,tz:pd.tz,col:pd.col,t:Math.random()});
+    }
+  });
+
+  // Mouse hover
+  var mouseX = -9999, mouseY = -9999;
+  canvas.addEventListener('mousemove',function(e){
+    var r=canvas.getBoundingClientRect();
+    mouseX=e.clientX-r.left; mouseY=e.clientY-r.top;
+  });
+  canvas.addEventListener('mouseleave',function(){
+    mouseX=-9999; mouseY=-9999;
+    tt.style.opacity='0';
+  });
+
+  function hexToRgb(hex,alpha){
+    var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return 'rgba('+r+','+g+','+b+','+alpha+')';
+  }
+
+  function drawBox(o){
+    var p=project(o.x,o.y,o.z);
+    var pw=o.w*p.s, ph=o.h*p.s;
+    var px=p.x-pw/2, py=p.y-ph;
+    o.px=px;o.py=py;o.pw=pw;o.ph=ph;
+    ctx.fillStyle=o.col;
+    ctx.strokeStyle='rgba(74,158,255,0.4)';
+    ctx.lineWidth=0.8;
+    ctx.beginPath();
+    ctx.rect(px,py,pw,ph);
+    ctx.fill();ctx.stroke();
+  }
+
+  function drawTower(o){
+    var p=project(o.x,o.y,o.z);
+    var tw=4*p.s/10, th=4*p.s;
+    var tx=p.x-tw/2, ty=p.y-th;
+    o.px=tx;o.py=ty;o.pw=tw*3;o.ph=th;
+    // tower body
+    ctx.fillStyle='rgba(80,50,10,0.9)';
+    ctx.strokeStyle=o.col;
+    ctx.lineWidth=0.8;
+    ctx.beginPath();ctx.rect(tx,ty,tw,th);ctx.fill();ctx.stroke();
+    // antenna panel
+    ctx.fillStyle=o.col;
+    ctx.beginPath();ctx.rect(tx-tw,ty,tw*3,th*0.25);ctx.fill();
+    // glow
+    ctx.strokeStyle=o.col;ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(p.x,ty,tw*2,0,Math.PI*2);
+    ctx.globalAlpha=0.15;ctx.stroke();ctx.globalAlpha=1;
+  }
+
+  function drawSphere(o){
+    var p=project(o.x,o.y,o.z);
+    var pr=o.r*p.s;
+    o.px=p.x;o.py=p.y;o.pr=pr;
+    var grd=ctx.createRadialGradient(p.x-pr*0.3,p.y-pr*0.3,pr*0.1,p.x,p.y,pr);
+    grd.addColorStop(0,'rgba(140,200,255,0.9)');
+    grd.addColorStop(1,hexToRgb(o.col,0.8));
+    ctx.beginPath();ctx.arc(p.x,p.y,pr,0,Math.PI*2);
+    ctx.fillStyle=grd;ctx.fill();
+    ctx.strokeStyle='rgba(74,158,255,0.6)';ctx.lineWidth=0.8;ctx.stroke();
+  }
+
+  function hitTest(o){
+    if(o.type==='sphere'){
+      var dx=mouseX-o.px, dy=mouseY-o.py;
+      return Math.sqrt(dx*dx+dy*dy)<Math.max(o.pr+4,10);
+    }
+    if(o.type==='box'||o.type==='tower'){
+      return mouseX>=o.px&&mouseX<=o.px+o.pw&&mouseY>=o.py&&mouseY<=o.py+o.ph;
+    }
+    return false;
+  }
+
+  var lastHit='';
+
+  function drawGrid(){
+    ctx.strokeStyle='rgba(26,48,80,0.6)';
+    ctx.lineWidth=0.5;
+    for(var i=-10;i<=10;i+=2){
+      var a=project(i,0,-10), b=project(i,0,10);
+      var c=project(-10,0,i), d=project(10,0,i);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(d.x,d.y);ctx.stroke();
+    }
+  }
+
+  function frame(){
+    requestAnimationFrame(frame);
+    angle += 0.004;
+
+    var W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Background gradient
+    var bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#07101e');bg.addColorStop(1,'#0d1a2e');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+    // Stars
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    for(var s=0;s<80;s++){
+      var sx=((s*137+W)%W), sy=((s*79)%(H*0.5));
+      var sr=0.5+((s*31)%10)/20;
+      ctx.beginPath();ctx.arc(sx,sy,sr,0,Math.PI*2);ctx.fill();
+    }
+
+    drawGrid();
+
+    // Sort objects by z (back to front)
+    var sorted = objs.slice().sort(function(a,b){
+      var pa=project(a.x,a.y,a.z), pb=project(b.x,b.y,b.z);
+      return pb.z - pa.z;
+    });
+
+    sorted.forEach(function(o){
+      if(o.type==='box') drawBox(o);
+      else if(o.type==='tower') drawTower(o);
+      else if(o.type==='sphere') drawSphere(o);
+    });
+
+    // Particles
+    parts.forEach(function(p){
+      p.t=(p.t+0.006)%1;
+      var px=p.fx+(p.tx-p.fx)*p.t;
+      var pz=p.fz+(p.tz-p.fz)*p.t;
+      var py=p.fy+(p.ty-p.fy)*p.t + Math.sin(p.t*Math.PI)*2;
+      var pt=project(px,py,pz);
+      var alpha=Math.sin(p.t*Math.PI)*0.9;
+      ctx.beginPath();ctx.arc(pt.x,pt.y,3,0,Math.PI*2);
+      ctx.fillStyle=hexToRgb(p.col,alpha);ctx.fill();
+      // trail
+      var prev_t=Math.max(0,p.t-0.05);
+      var ppx=p.fx+(p.tx-p.fx)*prev_t, ppz=p.fz+(p.tz-p.fz)*prev_t;
+      var ppy=p.fy+(p.ty-p.fy)*prev_t + Math.sin(prev_t*Math.PI)*2;
+      var ppt=project(ppx,ppy,ppz);
+      ctx.beginPath();ctx.moveTo(ppt.x,ppt.y);ctx.lineTo(pt.x,pt.y);
+      ctx.strokeStyle=hexToRgb(p.col,alpha*0.4);ctx.lineWidth=1;ctx.stroke();
+    });
+
+    // Hit detection
+    var hit = null;
+    objs.forEach(function(o){if(hitTest(o)) hit=o;});
+    if(hit){
+      if(hit.name!==lastHit){
+        ttt.textContent=hit.name;
+        ttd.textContent=hit.desc;
+        tt.style.opacity='1';
+        lastHit=hit.name;
+      }
+      canvas.style.cursor='pointer';
+    } else {
+      if(lastHit!==''){tt.style.opacity='0';lastHit='';}
+      canvas.style.cursor='default';
+    }
+  }
+  frame();
+})();
+</script>
+
+<script>
+// ── TIMELINE ──
+var tlData=[
+  {gen:'1G',yr:'1980s',col:'#888',bg:'#222',sub:'Analógico',title:'1G — Redes Analógicas (AMPS, NMT, ETACS)',body:'Solo voz analógica. Sin cifrado — cualquier escáner podía escuchar llamadas. Conmutación de circuitos pura. Celdas grandes (~30 km radio). Sin itinerancia internacional. Multiplexación FDMA.'},
+  {gen:'2G',yr:'1991',col:'#4a9eff',bg:'#1a3a5c',sub:'Digital/GSM',title:'2G — Primera Digitalización (GSM, IS-95)',body:'Digitalizó la voz con codecs. Cifrado básico. Introdujo SMS. Dos familias: TDMA (GSM) y CDMA (IS-95). Velocidades de datos: máx 9.6 kbps. GSM logró interoperabilidad global. Gran salto: de analógico a digital.'},
+  {gen:'2.5G',yr:'1997',col:'#2ecc71',bg:'#1a4a2a',sub:'Datos básicos',title:'2.5G — Transición a datos (GPRS, EDGE)',body:'Añadió conmutación de paquetes sobre infraestructura 2G. GPRS: 115 kbps teórico. EDGE con 8-PSK: 384 kbps teórico. Email móvil y WAP usables. Pavimentó el camino a 3G sin cambiar la red de radio.'},
+  {gen:'3G',yr:'2000',col:'#c07aff',bg:'#3a1a5c',sub:'Banda ancha móvil',title:'3G — Internet Móvil Real (IMT-2000, UMTS) ← Tu tema',body:'IMT-2000 unificó estándares globalmente. WCDMA/UMTS alcanza 2 Mbps estático. Habilitó videollamadas, GPS asistido, streaming, apps. Arquitectura dual CS+PS. En LATAM fue la primera banda ancha de millones de personas.'},
+  {gen:'4G',yr:'2009',col:'#1abc9c',bg:'#1a3a2a',sub:'Todo IP / LTE',title:'4G — Arquitectura 100% IP (LTE)',body:'Eliminó conmutación de circuitos. OFDMA reemplazó CDMA. EPC (Evolved Packet Core) simplificó el core. Velocidades teóricas 100 Mbps–1 Gbps. La voz pasó a VoLTE (IP).'}
+];
+var tlOpen=-1;
+(function(){
+  var track=document.getElementById('tl-track');
+  var panel=document.getElementById('tl-panel');
+  tlData.forEach(function(d,i){
+    var el=document.createElement('div');
+    el.className='tl-item';
+    el.innerHTML='<div class="tl-dot" style="border-color:'+d.col+';color:'+d.col+';background:'+d.bg+'">'+d.gen+'</div><div class="tl-year">'+d.yr+'</div><div class="tl-sub2">'+d.sub+'</div>';
+    el.addEventListener('click',function(){
+      document.querySelectorAll('.tl-item').forEach(function(x){x.classList.remove('act')});
+      if(tlOpen===i){panel.innerHTML='';tlOpen=-1;return;}
+      el.classList.add('act');tlOpen=i;
+      panel.innerHTML='<div class="tl-panel on"><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:'+d.col+'">'+d.title+'</h3><p style="font-size:13px;color:#8aa8cc;line-height:1.7">'+d.body+'</p></div>';
+    });
+    track.appendChild(el);
+  });
+})();
+
+// ── IMT CARDS ──
+(function(){
+  var data=[
+    {tag:'cb',tt:'Requisitos ITU',ti:'Velocidades mínimas',desc:'Umbrales de velocidad que toda tecnología 3G debía superar para ser certificada por la ITU.',specs:[['Estático/peatonal','2 Mbps'],['Vehicular (<120 km/h)','384 kbps'],['Alta velocidad (tren)','144 kbps'],['Cobertura','Global + satélite']]},
+    {tag:'cp',tt:'Familia',ti:'Tecnologías aprobadas',desc:'IMT-2000 aceptó múltiples tecnologías bajo su paraguas regulatorio.',specs:[['WCDMA/UMTS','Europa / Japón'],['CDMA2000','América del Norte'],['TD-SCDMA','China'],['EDGE (UWC-136)','Legado TDMA']]},
+    {tag:'cg',tt:'Espectro',ti:'Bandas de frecuencia',desc:'La CMR-2000 asignó bandas específicas para el despliegue de IMT-2000.',specs:[['Banda FDD principal','2100 MHz'],['Uplink','1920–1980 MHz'],['Downlink','2110–2170 MHz'],['TDD (TD-SCDMA)','1900/2000 MHz']]},
+    {tag:'ca',tt:'Arquitectura',ti:'Circuitos vs. Paquetes',desc:'Innovación clave de 3G: el dominio de paquetes (PS) coexiste con el de circuitos (CS).',specs:[['Voz','Circuit Switched (CS)'],['Datos/internet','Packet Switched (PS)'],['Protocolo control','RRC / NAS'],['Novedad','Dual domain CS+PS']]}
+  ];
+  var g=document.getElementById('imt-grid');
+  data.forEach(function(c,i){
+    var id='imc'+i;
+    var div=document.createElement('div');div.className='card';
+    div.innerHTML='<span class="ctag '+c.tag+'">'+c.tt+'</span><h3>'+c.ti+'</h3><p>'+c.desc+'</p><div class="cdet" id="'+id+'">'+c.specs.map(function(s){return '<div class="sr"><span class="sk">'+s[0]+'</span><span class="sv">'+s[1]+'</span></div>';}).join('')+'</div>';
+    div.addEventListener('click',function(){document.getElementById(id).classList.toggle('on');});
+    g.appendChild(div);
+  });
+})();
+
+// ── ARCH SVG ──
+(function(){
+  var svg=document.getElementById('arch-svg');
+  var ns='http://www.w3.org/2000/svg';
+  var defs=document.createElementNS(ns,'defs');
+  defs.innerHTML='<marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 2L8 5L2 8" fill="none" stroke="#4a9eff" stroke-width="1.5"/></marker>';
+  svg.appendChild(defs);
+
+  var nodes=[
+    {id:'ue', x:10, y:60,w:90,h:80,fill:'#0a2a4a',stroke:'#4a9eff',label:'UE',sub:'Dispositivo'},
+    {id:'nb', x:148,y:55,w:95,h:90,fill:'#2a1a0a',stroke:'#f5a623',label:'NodeB',sub:'Estación Base'},
+    {id:'rnc',x:286,y:55,w:95,h:90,fill:'#0a2a0a',stroke:'#2ecc71',label:'RNC',sub:'Controlador'},
+    {id:'cs', x:424,y:40,w:100,h:55,fill:'#2a0a0a',stroke:'#e74c3c',label:'MSC/VLR',sub:'Core Voz'},
+    {id:'ps', x:424,y:112,w:100,h:55,fill:'#0a0a2a',stroke:'#9b59b6',label:'SGSN/GGSN',sub:'Core Datos'},
+    {id:'in', x:568,y:60,w:100,h:80,fill:'#0a1a1a',stroke:'#1abc9c',label:'Internet',sub:'/ PSTN'}
+  ];
+  var lines=[
+    {x1:100,y1:100,x2:148,y2:100,c:'#4a9eff',lbl:'Uu'},
+    {x1:243,y1:100,x2:286,y2:100,c:'#4a9eff',lbl:'Iub'},
+    {x1:381,y1:90, x2:424,y2:67, c:'#e74c3c',lbl:'Iu-CS'},
+    {x1:381,y1:110,x2:424,y2:139,c:'#9b59b6',lbl:'Iu-PS'},
+    {x1:524,y1:67, x2:568,y2:85, c:'#e74c3c',lbl:''},
+    {x1:524,y1:139,x2:568,y2:115,c:'#9b59b6',lbl:''}
+  ];
+  lines.forEach(function(l){
+    var ln=document.createElementNS(ns,'line');
+    ['x1','y1','x2','y2'].forEach(function(a,i){ln.setAttribute(a,[l.x1,l.y1,l.x2,l.y2][i]);});
+    ln.setAttribute('stroke',l.c);ln.setAttribute('stroke-width','1.2');
+    ln.setAttribute('marker-end','url(#aw)');svg.appendChild(ln);
+    if(l.lbl){
+      var t=document.createElementNS(ns,'text');
+      t.setAttribute('x',(l.x1+l.x2)/2);t.setAttribute('y',l.y1-5);
+      t.setAttribute('font-size','9');t.setAttribute('fill',l.c);
+      t.setAttribute('text-anchor','middle');t.setAttribute('font-family','sans-serif');
+      t.textContent=l.lbl;svg.appendChild(t);
+    }
+  });
+
+  var archInfo={
+    ue:{title:'UE — User Equipment',body:'El dispositivo del usuario (teléfono + USIM). Usa WCDMA FDD: transmite en 1920–1980 MHz y recibe en 2110–2170 MHz de forma simultánea. Capacidad de soft handover: conectarse a 2–3 NodeB al mismo tiempo, sumando señales para mayor calidad.',specs:[['Interfaz aérea','Uu (WCDMA)'],['Chip rate','3.84 Mcps'],['Potencia TX','21–24 dBm'],['Duplex','FDD o TDD']]},
+    nb:{title:'NodeB — Estación Base UMTS',body:'Equivalente al BTS de GSM pero para WCDMA. Maneja la capa física: modulación/demodulación WCDMA, control de potencia de bucle interno (1500 Hz), mediciones RSSI y Ec/N0. Conecta al RNC por la interfaz Iub sobre ATM o IP.',specs:[['Función','Transceptor WCDMA'],['Control potencia','Inner loop (1500/s)'],['Interfaz RNC','Iub (ATM/IP)'],['Sectores típico','3 (120° c/u)']]},
+    rnc:{title:'RNC — Radio Network Controller',body:'El cerebro del UTRAN. Controla N NodeB. Gestiona el soft handover (único de CDMA), asignación de códigos OVSF, cifrado RRC, control de admisión y control de carga. Es el punto de conexión entre la red de acceso radio (UTRAN) y el Core Network.',specs:[['Función','Control radio + handover'],['Protocolo radio','RRC'],['Interfaz core','Iu-CS + Iu-PS'],['Control potencia','Outer loop']]},
+    cs:{title:'MSC/VLR — Core de Voz',body:'Mobile Switching Center gestiona las llamadas de voz por conmutación de circuitos. El VLR almacena datos temporales del usuario en esa área. Se conecta al HLR (base de datos central) y a la PSTN para llamadas externas.',specs:[['Función','Conmutación de voz'],['BD temporal','VLR'],['Protocolo','MAP / ISUP'],['Destino','PSTN']]},
+    ps:{title:'SGSN/GGSN — Core de Datos',body:'SGSN (Serving GPRS Support Node): gestiona sesiones de datos, movilidad y seguridad. GGSN (Gateway GPRS Support Node): pasarela hacia internet, asigna IPs y aplica políticas. La comunicación entre ambos usa GTP (GPRS Tunneling Protocol).',specs:[['SGSN','Movilidad + seguridad'],['GGSN','Gateway a internet'],['Protocolo','GTP (UDP encapsulado)'],['IP usuario','Asignada por GGSN']]},
+    in:{title:'Internet / PSTN',body:'Destino final de datos y voz. El GGSN conecta directamente a internet asignando una IP al UE. Para voz, el MSC interconecta con la PSTN. En UMTS ya era posible VoIP sobre el dominio PS, anticipando el IMS.',specs:[['Datos','GGSN → Internet (IP)'],['Voz','MSC → PSTN (E1)'],['IP usuario','Dinámica (GGSN)']]}
+  };
+
+  nodes.forEach(function(n){
+    var g=document.createElementNS(ns,'g');g.style.cursor='pointer';
+    var r=document.createElementNS(ns,'rect');
+    r.setAttribute('x',n.x);r.setAttribute('y',n.y);r.setAttribute('width',n.w);r.setAttribute('height',n.h);
+    r.setAttribute('rx','8');r.setAttribute('fill',n.fill);r.setAttribute('stroke',n.stroke);r.setAttribute('stroke-width','1.2');
+    var t1=document.createElementNS(ns,'text');
+    t1.setAttribute('x',n.x+n.w/2);t1.setAttribute('y',n.y+n.h/2-7);
+    t1.setAttribute('text-anchor','middle');t1.setAttribute('font-size','12');
+    t1.setAttribute('fill',n.stroke);t1.setAttribute('font-weight','700');t1.setAttribute('font-family','sans-serif');
+    t1.textContent=n.label;
+    var t2=document.createElementNS(ns,'text');
+    t2.setAttribute('x',n.x+n.w/2);t2.setAttribute('y',n.y+n.h/2+9);
+    t2.setAttribute('text-anchor','middle');t2.setAttribute('font-size','9');
+    t2.setAttribute('fill',n.stroke);t2.setAttribute('opacity','0.6');t2.setAttribute('font-family','sans-serif');
+    t2.textContent=n.sub;
+    g.appendChild(r);g.appendChild(t1);g.appendChild(t2);
+    g.addEventListener('mouseenter',function(){r.setAttribute('opacity','0.75');});
+    g.addEventListener('mouseleave',function(){r.setAttribute('opacity','1');});
+    g.addEventListener('click',function(){
+      var d=archInfo[n.id];
+      document.getElementById('ap-t').textContent=d.title;
+      document.getElementById('ap-b').textContent=d.body;
+      document.getElementById('ap-s').innerHTML=d.specs.map(function(s){return '<div class="sr"><span class="sk">'+s[0]+'</span><span class="sv">'+s[1]+'</span></div>';}).join('');
+      var pop=document.getElementById('apop');pop.classList.add('on');
+    });
+    svg.appendChild(g);
+  });
+})();
+
+// ── 8-PSK ──
+(function(){
+  var ns='http://www.w3.org/2000/svg';
+  var g=document.getElementById('psk-g');
+  var cx=375,cy=100,r=55;
+  var lbls=['000','001','010','011','100','101','110','111'];
+  var cols=['#4a9eff','#2ecc71','#f5a623','#e74c3c','#9b59b6','#1abc9c','#e67e22','#c0392b'];
+  for(var i=0;i<8;i++){
+    var ang=(i/8)*2*Math.PI-Math.PI/2;
+    var px=cx+r*Math.cos(ang),py=cy+r*Math.sin(ang);
+    var lx=cx+(r+16)*Math.cos(ang),ly=cy+(r+16)*Math.sin(ang);
+    var ln=document.createElementNS(ns,'line');
+    ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);ln.setAttribute('x2',px);ln.setAttribute('y2',py);
+    ln.setAttribute('stroke',cols[i]);ln.setAttribute('stroke-width','1');ln.setAttribute('stroke-dasharray','3,2');
+    g.appendChild(ln);
+    var c=document.createElementNS(ns,'circle');
+    c.setAttribute('cx',px);c.setAttribute('cy',py);c.setAttribute('r','6');c.setAttribute('fill',cols[i]);
+    g.appendChild(c);
+    var t=document.createElementNS(ns,'text');
+    t.setAttribute('x',lx);t.setAttribute('y',ly);t.setAttribute('font-size','9');
+    t.setAttribute('fill',cols[i]);t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','central');
+    t.setAttribute('font-family','sans-serif');t.textContent=lbls[i];
+    g.appendChild(t);
+  }
+})();
+
+// ── CDMA DEMO ──
+(function(){
+  var bits=[1,0,1,1], code=[1,-1,1,-1,1,1,-1,1];
+  function chip(v,bg){var d=document.createElement('div');d.className='chip';d.style.background=bg;d.textContent=v;return d;}
+  function render(){
+    var dd=document.getElementById('cd-data');
+    var dc=document.getElementById('cd-code');
+    var ds=document.getElementById('cd-spread');
+    dd.innerHTML='';dc.innerHTML='';ds.innerHTML='';
+    bits.forEach(function(b){dd.appendChild(chip(b,b>0?'#c0392b':'#2980b9'));});
+    code.forEach(function(c){dc.appendChild(chip(c>0?'+1':'-1','#334466'));});
+    code.forEach(function(){ds.appendChild(chip('?','#223');});
+  }
+  render();
+  document.getElementById('cdma-btn').addEventListener('click',function(){
+    var spread=[];
+    for(var i=0;i<code.length;i++) spread.push(bits[Math.floor(i/(code.length/bits.length))]*code[i]);
+    var cells=document.getElementById('cd-spread').children;
+    spread.forEach(function(v,i){
+      (function(ii,vv){setTimeout(function(){cells[ii].style.background='#6a2a9a';cells[ii].textContent=vv>0?'+1':'-1';},ii*130);})(i,v);
+    });
+  });
+})();
+
+// ── EDGE ──
+(function(){
+  var data=[
+    {hl:false,badge:'TDMA-EDGE (GSM)',bc:'ca',ti:'Enhanced Data rates for GSM Evolution',specs:[['Base','GSM / GPRS'],['Modulación','8-PSK (3 bits/símbolo)'],['Vel. teórica','384 kbps'],['Vel. real','~100–150 kbps'],['Canal','200 kHz (igual a GSM)'],['Despliegue','150+ países'],['Estatus ITU','Certificado 3G (UWC-136)']]},
+    {hl:true,badge:'IS-136HS',bc:'cb',ti:'IS-136 High Speed (D-AMPS evolution)',specs:[['Base','IS-136 / D-AMPS'],['Modulación','8-PSK avanzado'],['Vel. teórica','384 kbps'],['Banda','850 / 1900 MHz'],['Región','América del Norte'],['Despliegue real','Transición → WCDMA'],['Nota','Operadores migraron directo a WCDMA']]}
+  ];
+  var g=document.getElementById('edge-grid');
+  data.forEach(function(d){
+    var div=document.createElement('div');div.className='cmp-card'+(d.hl?' hl':'');
+    div.innerHTML='<span class="ctag '+d.bc+'" style="margin-bottom:10px;display:inline-block">'+d.badge+'</span><h3 style="font-size:14px;font-weight:600;margin-bottom:12px">'+d.ti+'</h3>'+d.specs.map(function(s){return '<div class="sr"><span class="sk">'+s[0]+'</span><span class="sv">'+s[1]+'</span></div>';}).join('');
+    g.appendChild(div);
+  });
+})();
+
+// ── SPEEDS ──
+(function(){
+  var data=[
+    {l:'WCDMA/UMTS — estático (teórico)',v:2048,c:'#4a9eff'},
+    {l:'WCDMA/UMTS — vehicular (real)',v:384,c:'#7aadff'},
+    {l:'EDGE — teórico',v:384,c:'#f5a623'},
+    {l:'EDGE — real promedio',v:130,c:'#e6a020'},
+    {l:'GPRS (2.5G ref.)',v:114,c:'#555e66'},
+    {l:'GSM datos (2G ref.)',v:9,c:'#3a4450'}
+  ];
+  var max=2048,cont=document.getElementById('speeds-cont');
+  data.forEach(function(d){
+    var pct=Math.round(d.v/max*100);
+    var wrap=document.createElement('div');wrap.className='speed-item';
+    wrap.innerHTML='<div class="speed-head"><span>'+d.l+'</span><span style="font-weight:600;color:'+d.c+'">'+d.v+' kbps</span></div><div class="speed-track"><div class="speed-fill" style="background:'+d.c+'" data-w="'+pct+'">'+d.v+'k</div></div>';
+    cont.appendChild(wrap);
+  });
+  var io=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){
+      document.querySelectorAll('.speed-fill').forEach(function(el){el.style.width=el.dataset.w+'%';});
+      io.disconnect();
+    }
+  });
+  io.observe(cont);
+
+  var srvData=[
+    {tag:'cb',tt:'Voz AMR',desc:'Adaptive Multi-Rate codec. Bitrate variable 4.75–12.2 kbps con adaptación dinámica al canal de radio.',specs:[['Codec','AMR'],['Bitrate','4.75–12.2 kbps'],['Videollamada','64 kbps (novedad 3G)'],['Calidad','Superior a 2G']]},
+    {tag:'cg',tt:'Internet móvil real',desc:'Primera generación donde navegar webs completas, email con adjuntos y descargar aplicaciones son viables.',specs:[['Navegación','Páginas HTML completas'],['Email','Con adjuntos'],['Descarga apps','Tiendas de aplicaciones'],['Streaming','Audio (no HD video)']]},
+    {tag:'ca',tt:'Impacto social',desc:'3G fue el catalizador del ecosistema smartphone. Sin 3G no existirían: iPhone original, App Store, Google Maps móvil.',specs:[['iPhone (2007)','Necesitó EDGE/3G'],['Colombia (~2003)','Primera banda ancha de millones'],['LATAM','Salto tecnológico masivo'],['Legado','Base del ecosistema de apps']]}
+  ];
+  var sg=document.getElementById('srv-grid');
+  srvData.forEach(function(c,i){
+    var id='sv'+i;
+    var div=document.createElement('div');div.className='card';
+    div.innerHTML='<span class="ctag '+c.tag+'">'+c.tt+'</span><p>'+c.desc+'</p><div class="cdet" id="'+id+'">'+c.specs.map(function(s){return '<div class="sr"><span class="sk">'+s[0]+'</span><span class="sv">'+s[1]+'</span></div>';}).join('')+'</div>';
+    div.addEventListener('click',function(){document.getElementById(id).classList.toggle('on');});
+    sg.appendChild(div);
+  });
+})();
+
+// ── QUIZ ──
+var qData=[
+  {q:'¿Qué organismo internacional definió IMT-2000 como el marco de las redes 3G?',opts:['IEEE','3GPP','ITU','ETSI'],ans:2,exp:'La ITU (Unión Internacional de Telecomunicaciones) definió IMT-2000. 3GPP implementó WCDMA/UMTS bajo ese paraguas técnico.'},
+  {q:'Velocidad mínima exigida por IMT-2000 en condición estática (peatonal):',opts:['144 kbps','384 kbps','1 Mbps','2 Mbps'],ans:3,exp:'2 Mbps estático, 384 kbps vehicular, 144 kbps a alta velocidad. Estos tres valores son los requisitos fundamentales del estándar.'},
+  {q:'¿Qué interfaz aérea conecta el UE con el NodeB en UMTS?',opts:['Iub','Iu-PS','Uu','Iur'],ans:2,exp:'La interfaz Uu conecta UE-NodeB con WCDMA. Iub conecta NodeB-RNC. Iu-PS conecta RNC con el dominio de paquetes del core.'},
+  {q:'La ventaja técnica clave de EDGE sobre GPRS es:',opts:['Mayor ancho de banda de canal','Modulación 8-PSK (3 bits/símbolo)','Conmutación de circuitos','Mayor cobertura de celda'],ans:1,exp:'8-PSK codifica 3 bits/símbolo vs 1 bit de GMSK. El canal sigue siendo 200 kHz — la ganancia es de eficiencia espectral, no de ancho de banda.'},
+  {q:'En WCDMA, el Spreading Factor (SF) determina:',opts:['La frecuencia portadora','La relación chip rate / bit rate del usuario','El número de celdas en red','La banda de frecuencia asignada'],ans:1,exp:'SF = Chip Rate / Bit Rate = 3840 kbps / bitrate_usuario. SF alto → menor velocidad pero mayor ganancia de procesamiento y mejor cobertura.'}
+];
+var qState=[],qScore=0;
+function buildQuiz(){
+  qState=new Array(qData.length).fill(false);qScore=0;
+  var cont=document.getElementById('r-quiz');cont.innerHTML='';
+  qData.forEach(function(q,qi){
+    var div=document.createElement('div');div.className='qq';div.id='qq'+qi;
+    div.innerHTML='<h4>'+(qi+1)+'. '+q.q+'</h4><div class="qopts">'+q.opts.map(function(o,oi){return '<button class="qopt" id="qo'+qi+'_'+oi+'" data-qi="'+qi+'" data-oi="'+oi+'">'+o+'</button>';}).join('')+'</div><div class="qfb" id="qf'+qi+'"></div>';
+    cont.appendChild(div);
+  });
+  cont.querySelectorAll('.qopt').forEach(function(b){
+    b.addEventListener('click',function(){answerQ(+this.dataset.qi,+this.dataset.oi);});
+  });
+}
+function answerQ(qi,oi){
+  if(qState[qi])return;qState[qi]=true;
+  var q=qData[qi];
+  document.querySelectorAll('#qq'+qi+' .qopt').forEach(function(b){b.disabled=true;});
+  if(oi===q.ans){qScore++;document.getElementById('qo'+qi+'_'+oi).classList.add('ok');}
+  else{document.getElementById('qo'+qi+'_'+oi).classList.add('no');document.getElementById('qo'+qi+'_'+q.ans).classList.add('ok');}
+  var fb=document.getElementById('qf'+qi);
+  fb.textContent=q.exp;
+  fb.style.background=oi===q.ans?'rgba(46,204,113,.12)':'rgba(231,76,60,.12)';
+  fb.style.color=oi===q.ans?'#2ecc71':'#e74c3c';
+  fb.classList.add('on');
+  if(qState.every(Boolean)){
+    setTimeout(function(){
+      var sc=document.createElement('div');sc.className='scorebox';sc.style.display='block';
+      sc.innerHTML='<div class="scorenum">'+qScore+'/'+qData.length+'</div><p style="color:#8aa8cc;margin-top:8px">Quiz completado</p><button class="topbtn" style="margin-top:14px">Reintentar</button>';
+      sc.querySelector('button').addEventListener('click',function(){buildQuiz();});
+      document.getElementById('r-quiz').appendChild(sc);
+    },500);
+  }
+}
+buildQuiz();
+
+// ── CASE ──
+function buildCase(){
+  var cont=document.getElementById('r-case');
+  cont.innerHTML='<div style="background:var(--card);border-left:3px solid var(--orange);border-radius:10px;padding:18px;margin-bottom:20px"><h3 style="font-size:15px;font-weight:600;margin-bottom:6px">Escenario: RF Engineer, Bogotá 2003</h3><p style="font-size:13px;color:#8aa8cc;line-height:1.7">Eres el ingeniero de RF de un operador colombiano desplegando la primera celda UMTS en el centro histórico (La Candelaria). Tu presupuesto permite 3 NodeB. Configura la red óptima paso a paso.</p></div>'+
+  '<div class="case-steps"><button class="cstep-btn on" data-st="0">Paso 1: Cobertura radio</button><button class="cstep-btn" data-st="1">Paso 2: Capacidad WCDMA</button><button class="cstep-btn" data-st="2">Paso 3: Core Network</button><button class="cstep-btn" data-st="3">Resultado final</button></div>'+
+  '<div class="csp on" id="csp0"><h3 style="font-size:15px;margin-bottom:12px">Parámetros de cobertura radio</h3>'+
+  '<div class="inp-wrap"><label>Altura de la antena NodeB</label><select id="ant-h"><option value="15">15 m (edificio bajo)</option><option value="30" selected>30 m (edificio mediano)</option><option value="50">50 m (edificio alto)</option></select></div>'+
+  '<div class="inp-wrap"><label>Potencia de transmisión</label><select id="tx-p"><option value="20">20 W (urbano denso)</option><option value="40" selected>40 W (estándar)</option><option value="60">60 W (cobertura extendida)</option></select></div>'+
+  '<div class="inp-wrap"><label>Sectores por NodeB</label><select id="sects"><option value="1">1 sector (omnidireccional)</option><option value="3" selected>3 sectores (típico)</option><option value="6">6 sectores (alta densidad)</option></select></div>'+
+  '<button class="topbtn" id="c1btn">Calcular cobertura →</button><div class="rcard" id="rc0"></div></div>'+
+  '<div class="csp" id="csp1"><h3 style="font-size:15px;margin-bottom:6px">Dimensionamiento de capacidad</h3><p style="font-size:12px;color:#8aa8cc;margin-bottom:12px">La capacidad WCDMA depende del factor de carga (η). Por encima de 75% hay riesgo de inestabilidad por interferencia.</p>'+
+  '<div class="inp-wrap"><label>Usuarios simultáneos por celda</label><input type="number" id="users" value="50" min="5" max="300"/></div>'+
+  '<div class="inp-wrap"><label>Servicio dominante</label><select id="svc"><option value="12.2">Voz AMR (12.2 kbps)</option><option value="64" selected>Datos (64 kbps)</option><option value="128">Videollamada (128 kbps)</option></select></div>'+
+  '<button class="topbtn" id="c2btn">Calcular carga →</button><div class="rcard" id="rc1"></div></div>'+
+  '<div class="csp" id="csp2"><h3 style="font-size:15px;margin-bottom:6px">Dimensionamiento del Core</h3><p style="font-size:12px;color:#8aa8cc;margin-bottom:12px">Con 3 NodeB y un RNC, dimensionamos los nodos del core usando el modelo de tráfico Erlang B.</p>'+
+  '<div class="inp-wrap"><label>Tráfico ofrecido (Erlangs)</label><input type="number" id="traf" value="30" min="5" max="500"/></div>'+
+  '<div class="inp-wrap"><label>Bloqueado aceptable (GoS)</label><select id="gos"><option value="2.2">2% (alta calidad)</option><option value="1.7" selected>5% (estándar)</option><option value="1.3">10% (económico)</option></select></div>'+
+  '<button class="topbtn" id="c3btn">Dimensionar Core →</button><div class="rcard" id="rc2"></div></div>'+
+  '<div class="csp" id="csp3"><div style="background:var(--card);border-radius:10px;padding:20px"><h3 style="font-size:15px;margin-bottom:10px">Diseño final — Celda UMTS La Candelaria</h3><div id="final-r"><p style="font-size:13px;color:#8aa8cc">Completa los tres pasos anteriores para ver el diseño consolidado.</p></div><p style="font-size:11px;color:#4a6a8a;margin-top:14px">Este proceso refleja el dimensionamiento real de red UMTS. En la industria se usa software como ASSET, Atoll o NetAct.</p></div></div>';
+
+  var cRes={};
+  cont.querySelectorAll('.cstep-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      cont.querySelectorAll('.cstep-btn').forEach(function(b){b.classList.remove('on');});
+      cont.querySelectorAll('.csp').forEach(function(s){s.classList.remove('on');});
+      this.classList.add('on');
+      document.getElementById('csp'+this.dataset.st).classList.add('on');
+    });
+  });
+  document.getElementById('c1btn').addEventListener('click',function(){
+    var h=+document.getElementById('ant-h').value;
+    var p=+document.getElementById('tx-p').value;
+    var s=+document.getElementById('sects').value;
+    var r=Math.round((h*0.08+p*0.04+2)*10)/10;
+    var area=Math.round(Math.PI*r*r*10)/10;
+    var total=Math.round(area*3*10)/10;
+    cRes.r=r;cRes.area=area;cRes.s=s;cRes.total=total;
+    var rc=document.getElementById('rc0');rc.className='rcard on';
+    rc.innerHTML='<div class="sr"><span class="sk">Radio de celda estimado</span><span class="sv">~'+r+' km</span></div><div class="sr"><span class="sk">Área por NodeB</span><span class="sv">~'+area+' km²</span></div><div class="sr"><span class="sk">Sectores</span><span class="sv">'+s+' por NodeB</span></div><div class="sr"><span class="sk">Cobertura total (3 NodeB)</span><span class="sv">~'+total+' km²</span></div><p style="font-size:11px;color:#8aa8cc;margin-top:8px">La Candelaria ≈ 1.5 km². '+(total>=1.5?'Esta configuración cubre la zona completa.':'Considera aumentar altura o potencia para cobertura total.')+'</p>';
+  });
+  document.getElementById('c2btn').addEventListener('click',function(){
+    var u=+document.getElementById('users').value;
+    var br=+document.getElementById('svc').value;
+    var sf=Math.max(4,Math.round(3840/br));
+    var eta=Math.min(0.98,u*br/3840);
+    var ep=Math.round(eta*100);
+    cRes.u=u;cRes.br=br;cRes.sf=sf;cRes.ep=ep;
+    var col=eta<0.5?'#2ecc71':eta<0.75?'#f5a623':'#e74c3c';
+    var rc=document.getElementById('rc1');rc.className='rcard on';
+    rc.innerHTML='<div class="sr"><span class="sk">Bitrate por usuario</span><span class="sv">'+br+' kbps</span></div><div class="sr"><span class="sk">Spreading Factor</span><span class="sv">SF = '+sf+'</span></div><div class="sr"><span class="sk">Factor de carga (η)</span><span class="sv" style="color:'+col+'">'+ep+'%</span></div><p style="font-size:11px;color:#8aa8cc;margin-top:8px">'+(eta<0.5?'Carga baja. Red estable, baja interferencia.':eta<0.75?'Carga moderada. Aceptable para zona urbana densa.':'Carga alta. Riesgo de inestabilidad. Considera más NodeB o reducir usuarios por celda.')+'</p>';
+  });
+  document.getElementById('c3btn').addEventListener('click',function(){
+    var A=+document.getElementById('traf').value;
+    var f=+document.getElementById('gos').value;
+    var N=Math.ceil(A+Math.sqrt(A)*f);
+    var lk=Math.ceil(N/30);
+    cRes.N=N;cRes.lk=lk;
+    var rc=document.getElementById('rc2');rc.className='rcard on';
+    rc.innerHTML='<div class="sr"><span class="sk">Tráfico ofrecido</span><span class="sv">'+A+' Erlangs</span></div><div class="sr"><span class="sk">Canales requeridos (N)</span><span class="sv">'+N+'</span></div><div class="sr"><span class="sk">Links E1/IP al SGSN</span><span class="sv">'+lk+'</span></div><p style="font-size:11px;color:#8aa8cc;margin-top:8px">Erlang B aproximado. En UMTS el SGSN gestiona esto como sesiones PDP activas simultáneas.</p>';
+    document.getElementById('final-r').innerHTML='<div class="sr"><span class="sk">Cobertura (3 NodeB)</span><span class="sv">'+(cRes.total?'~'+cRes.total+' km²':'—')+'</span></div><div class="sr"><span class="sk">Usuarios simultáneos</span><span class="sv">'+(cRes.u||'—')+'</span></div><div class="sr"><span class="sk">Spreading Factor</span><span class="sv">'+(cRes.sf?'SF='+cRes.sf:'—')+'</span></div><div class="sr"><span class="sk">Factor de carga (η)</span><span class="sv">'+(cRes.ep?cRes.ep+'%':'—')+'</span></div><div class="sr"><span class="sk">Canales core (SGSN)</span><span class="sv">'+N+'</span></div><div class="sr"><span class="sk">Links E1/IP</span><span class="sv">'+lk+'</span></div>';
+  });
+}
+buildCase();
+
+function switchR(t){
+  document.getElementById('r-quiz').style.display=t==='q'?'block':'none';
+  document.getElementById('r-case').style.display=t==='c'?'block':'none';
+  document.getElementById('rt-q').classList.toggle('on',t==='q');
+  document.getElementById('rt-c').classList.toggle('on',t==='c');
+}
+
+// ── NAV active on scroll ──
+var secs=['hero','timeline','imt','umts','edge','servicios','retos'];
+window.addEventListener('scroll',function(){
+  var best='hero',besty=Infinity;
+  secs.forEach(function(id){
+    var el=document.getElementById(id)||document.querySelector('[id="'+id+'"]');
+    if(!el)return;
+    var top=Math.abs(el.getBoundingClientRect().top);
+    if(top<besty){besty=top;best=id;}
+  });
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    a.classList.toggle('act',a.getAttribute('href')==='#'+best);
+  });
+});
+</script>
+</body>
+</html>
